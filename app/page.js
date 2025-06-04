@@ -1,103 +1,143 @@
+'use client';
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+
+const SplineScene = () => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/@splinetool/viewer@0.9.518/build/spline-viewer.js";
+    script.type = "module";
+    document.body.appendChild(script);
+  }, []);
+
+  return (
+    <div
+      className="absolute inset-0 z-0"
+      data-animation-type="spline"
+      data-spline-url="https://prod.spline.design/1UjZlPEUBkIEmBpR/scene.splinecode"
+    >
+      <spline-viewer
+        url="https://prod.spline.design/1UjZlPEUBkIEmBpR/scene.splinecode"
+        class="w-full h-full"
+      ></spline-viewer>
+    </div>
+  );
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <>
+    
+  
+    <div className="relative overflow-hidden bg-white">
+      <SplineScene />
+      <div className="relative z-10 flex flex-col items-center justify-start px-6">
+        {/* Logo and Nav */}
+        <div className="w-full max-w-7xl flex justify-between items-center px-4 py-2 border-b border-gray-200 bg-white bg-opacity-90 backdrop-blur-md">
+          <div className="text-xl font-bold">🔳 SarVam AI</div>
+          <div className="hidden md:flex gap-6 text-sm font-medium text-gray-700">
+            <span className="cursor-pointer">Features</span>
+            <span className="cursor-pointer">Pricing</span>
+            <span className="cursor-pointer">Documentation</span>
+            <span className="cursor-pointer">Solutions</span>
+            <span className="cursor-pointer">Resources</span>
+          </div>
+          <div className="flex gap-2">
+            <Button className="text-sm">
+              <Link href={'https://github.com/Rahul12gaming'}>View Creator Profile</Link>
+            </Button>
+           
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Hero Section */}
+        <div className="text-center max-w-4xl mt-16">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight text-black">
+            Supercharge your{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">
+              Call Operations
+            </span>{" "}
+            with Voice AI
+          </h1>
+          <p className="mt-4 text-gray-600 max-w-xl mx-auto text-base md:text-lg">
+            Discover the new way to build, test, deploy, and monitor
+            production-ready AI voice agents at scale.
+          </p>
+           <div className="text-center mt-10">
+          <Image src={'/demo.png'} alt="Demo" width={1000} height={800}/>
+        </div>
+          <div className="mt-6 flex justify-center gap-4">
+            <Button className="text-sm"><Link href={'/flow'}>Take Free Demo!</Link></Button>
+            
+          </div>
+        </div>
+
+      
+
+       
+
+
+       
+      </div>
+
+
     </div>
+     <footer className="mt-20 bg-[#0f0f0f] text-gray-300 py-12 px-6">
+      <div className="max-w-7xl mx-auto grid md:grid-cols-5 gap-8">
+        {/* Newsletter */}
+        <div className="md:col-span-2">
+          <h2 className="text-white text-lg font-semibold mb-2">🔳 SarVam AI</h2>
+          <p className="text-sm mb-4">Subscribe to our newsletter for our product updates</p>
+          <div className="flex items-center gap-2">
+            <Input placeholder="Your email" className="rounded-full px-4 py-2 bg-transparent border border-gray-500 placeholder:text-gray-400 text-sm" />
+            <Button variant={"outline"} className={"text-black"}>Submit</Button>
+          </div>
+        </div>
+
+        {/* Column 1 */}
+        <div>
+          <h4 className="text-white font-semibold text-sm mb-3">COMPANY</h4>
+          <ul className="space-y-2 text-sm">
+            <li>About Us</li>
+            <li>Launch YC</li>
+            <li>Product Hunt</li>
+            <li>Careers</li>
+          </ul>
+        </div>
+
+        {/* Column 2 */}
+        <div>
+          <h4 className="text-white font-semibold text-sm mb-3">USE CASES</h4>
+          <ul className="space-y-2 text-sm">
+            <li>Healthcare</li>
+            <li>Finance Services</li>
+            <li>Insurance</li>
+            <li>Home Services</li>
+          </ul>
+        </div>
+
+        {/* Column 3 */}
+        <div>
+          <h4 className="text-white font-semibold text-sm mb-3">ECOSYSTEM</h4>
+          <ul className="space-y-2 text-sm">
+            <li>Certified Partners</li>
+            <li>Creator Partners</li>
+            <li>APP Partners</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Socials */}
+      <div className="mt-10 flex justify-end gap-4 text-gray-400">
+        <i className="ri-discord-line text-xl"></i>
+        <i className="ri-twitter-x-line text-xl"></i>
+        <i className="ri-linkedin-box-line text-xl"></i>
+        <i className="ri-youtube-line text-xl"></i>
+      </div>
+    </footer>
+      </>
   );
 }
