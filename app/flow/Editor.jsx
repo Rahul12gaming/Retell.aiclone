@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Background,
   addEdge,
   useNodesState,
   useEdgesState,
-  ReactFlowProvider,
   BackgroundVariant,
   useReactFlow,
   MiniMap,
@@ -19,6 +18,8 @@ import TransferCall from "../component/nodes/TransferCall";
 import PressDigit from "../component/nodes/PressDigit";
 import NodeSettingsSidebar from "../component/sidebars/CallConversationSetting";
 import PageHeader from "../component/header/Header";
+import { downloadFlowAsJSON, readFlowJSONFile } from "../utils/EditorUtils";
+import GlobalSettingsSidebar from "../component/sidebars/GlobalSetting";
 
 const nodeTypes = {
   Conversation: ConversationNode,
@@ -27,57 +28,33 @@ const nodeTypes = {
   PressDigit: PressDigit,
 };
 
+const flowKey = "my-flow-key";
+
 const Editor = () => {
 
+  const [selectedNode,setSelectedNode]=useState(null)
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState([
-    {
-      id: "1",
-      type: "Conversation",
-      position: { x: 250, y: 150 },
-      data: { label: "Conversation" }, // You can access this via props inside ConversationNode
-    },
-  ]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
+  // handle onConnect nodes
   const onConnect = useCallback(
     (params) =>
       setEdges((eds) => addEdge({ ...params, type: "smoothstep" }, eds)),
     [setEdges]
   );
 
+  //handle node drag over
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  //generate unique id for each  node
-  const generateUniqueId = () => {
-    const existingIds = new Set([
-      ...nodes
-        .flatMap((node) => [parseInt(node.id, 10), parseInt(node.parentID, 10)])
-        .filter(Boolean),
-      ...edges
-        .flatMap((edge) => [
-          parseInt(edge.source, 10),
-          parseInt(edge.target, 10),
-        ])
-        .filter(Boolean),
-    ]);
-
-    let newId = 1; // Start from 1
-
-    while (existingIds.has(newId)) {
-      newId++; // Find the next available ID
-    }
-
-    return `${newId}`; // Return as a string
-  };
-
+  // handle ondrop nodes
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -94,7 +71,7 @@ const Editor = () => {
       });
 
       const newNode = {
-        id: generateUniqueId(),
+        id: `node-${Date.now()}`,
         type: type.label,
         position,
         data: {
@@ -102,25 +79,67 @@ const Editor = () => {
         },
       };
 
-
       setNodes((prevNodes) => [...prevNodes, newNode]);
     },
     [reactFlowInstance]
   );
 
-
+  //handle remove nodes
   const handleRemoveNode = (id) => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
   };
+
+const handleExport = () => {
+  downloadFlowAsJSON(nodes, edges);
+};
+
+const handleImport = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    readFlowJSONFile(file, ({ nodes, edges }) => {
+      setNodes(nodes);
+      setEdges(edges);
+    });
+  }
+};
+
+  const onNodeClick = (_, node) => {
+    
+    setSelectedNode(node.id)
+  }
+  // Load saved flow on mount
+  useEffect(() => {
+    try {
+      const flow = JSON.parse(localStorage.getItem(flowKey));
+      if (flow && Array.isArray(flow.nodes) && Array.isArray(flow.edges)) {
+        setNodes(flow.nodes);
+        setEdges(flow.edges);
+      }
+    } catch (error) {
+      console.error("Failed to load flow from localStorage:", error);
+    }
+  }, [setNodes, setEdges]);
+
+  // Save flow whenever nodes or edges change
+  useEffect(() => {
+    const flow = { nodes, edges };
+    try {
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+    } catch (error) {
+      console.error("Failed to save flow to localStorage:", error);
+    }
+  }, [nodes, edges]);
+
   return (
     <>
-      <PageHeader />
+      <PageHeader downloadJson={handleExport} importJson={handleImport}/>
 
       <div className="flex w-full h-screen">
         <NodeSidebar />
 
         <div className="flex-1 bg-[#f2f2f2] relative" ref={reactFlowWrapper}>
           <ReactFlow
+          onNodeClick={onNodeClick}
             nodes={nodes.map((node) => ({
               ...node,
               data: {
@@ -129,8 +148,12 @@ const Editor = () => {
               },
             }))}
             edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
+            onNodesChange={(changes) => {
+              onNodesChange(changes);
+            }}
+            onEdgesChange={(changes) => {
+              onEdgesChange(changes);
+            }}
             onConnect={onConnect}
             onDrop={onDrop}
             onDragOver={onDragOver}
@@ -146,8 +169,8 @@ const Editor = () => {
             />
           </ReactFlow>
         </div>
-
-        <NodeSettingsSidebar />
+          {!selectedNode? <GlobalSettingsSidebar/>
+        :<NodeSettingsSidebar />}
       </div>
     </>
   );
